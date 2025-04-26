@@ -3,6 +3,7 @@ services:
   - type: web
     name: fakedetector-api
     env: python
+    plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: python run_api_server.py
     envVars:
@@ -15,6 +16,7 @@ services:
   - type: web
     name: fakedetector-frontend
     env: node
+    plan: free
     buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
