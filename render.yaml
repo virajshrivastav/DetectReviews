@@ -9,10 +9,7 @@ services:
       - key: OPENROUTER_API_KEY
         value: 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
       - key: ALLOWED_ORIGINS
-        fromService:
-          name: fakedetector-frontend
-          type: web
-          property: url
+        value: "*"  # Allow all origins initially, we'll update this later
 
   # Frontend Next.js Service
   - type: web
@@ -25,4 +22,4 @@ services:
         fromService:
           name: fakedetector-api
           type: web
-          property: url
+          property: host  # Using host instead of url

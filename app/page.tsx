@@ -29,7 +29,9 @@ export default function Home() {
       formData.append('model', 'thudm/glm-4-9b:free') // Use a faster free model
 
       // Get the API URL from environment variable or use default
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      const apiHost = process.env.NEXT_PUBLIC_API_URL || 'localhost:8000'
+      // Construct the full URL with https protocol for Render deployment
+      const apiUrl = `https://${apiHost}`
 
       // Send the file to the API
       const response = await fetch(`${apiUrl}/api/analyze`, {
