@@ -78,10 +78,13 @@ export default function Home() {
         }
       } catch (fetchError) {
         console.error('Fetch error:', fetchError)
-        throw new Error(`Network error: ${fetchError.message}`)
+        throw new Error(`Network error: ${fetchError instanceof Error ? fetchError.message : 'Failed to fetch'}`)
       }
 
       // Parse the response
+      if (!response) {
+        throw new Error('No response received from the server')
+      }
       const data = await response.json()
 
       if (data.error) {
