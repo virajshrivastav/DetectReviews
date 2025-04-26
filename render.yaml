@@ -24,4 +24,6 @@ services:
         fromService:
           name: fakedetector-api
           type: web
-          property: host  # Using host instead of url
+          property: host
+      - key: NEXT_PUBLIC_API_PROTOCOL
+        value: "https"

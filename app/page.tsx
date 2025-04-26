@@ -28,19 +28,36 @@ export default function Home() {
       formData.append('file', files[0])
       formData.append('model', 'thudm/glm-4-9b:free') // Use a faster free model
 
-      // Get the API URL from environment variable or use default
+      // Get the API URL and protocol from environment variables or use defaults
       const apiHost = process.env.NEXT_PUBLIC_API_URL || 'localhost:8000'
-      // Construct the full URL with https protocol for Render deployment
-      const apiUrl = `https://${apiHost}`
+      const apiProtocol = process.env.NEXT_PUBLIC_API_PROTOCOL || 'http'
+
+      // Construct the full URL with appropriate protocol
+      // If it already includes http:// or https://, use it as is
+      const apiUrl = apiHost.startsWith('http') ? apiHost : `${apiProtocol}://${apiHost}`
+
+      console.log('Using API URL:', apiUrl)
 
       // Send the file to the API
-      const response = await fetch(`${apiUrl}/api/analyze`, {
-        method: 'POST',
-        body: formData,
-      })
+      console.log('Sending request to:', `${apiUrl}/api/analyze`)
 
-      if (!response.ok) {
-        throw new Error(`API request failed with status ${response.status}`)
+      let response;
+      try {
+        response = await fetch(`${apiUrl}/api/analyze`, {
+          method: 'POST',
+          body: formData,
+        })
+
+        console.log('Response status:', response.status)
+
+        if (!response.ok) {
+          const errorText = await response.text()
+          console.error('Error response:', errorText)
+          throw new Error(`API request failed with status ${response.status}: ${errorText}`)
+        }
+      } catch (fetchError) {
+        console.error('Fetch error:', fetchError)
+        throw new Error(`Network error: ${fetchError.message}`)
       }
 
       // Parse the response

@@ -31,12 +31,26 @@ class ReviewAnalyzerHandler(BaseHTTPRequestHandler):
         elif any(origin.endswith(domain.strip()) for domain in ALLOWED_ORIGINS if domain.startswith('.')):
             self.send_header('Access-Control-Allow-Origin', origin)
 
-        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_header('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Origin, Accept')
         self.end_headers()
 
     def do_OPTIONS(self):
         self._set_headers()
+
+    def do_HEAD(self):
+        self.send_response(200)
+        self.end_headers()
+
+    def do_GET(self):
+        if self.path == '/':
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+            self.wfile.write(b'API server is running')
+        else:
+            self.send_response(404)
+            self.end_headers()
 
     def parse_multipart_form(self):
         """Parse multipart form data without using the cgi module"""
@@ -112,10 +126,14 @@ class ReviewAnalyzerHandler(BaseHTTPRequestHandler):
         return form_data
 
     def do_POST(self):
+        print(f"Received POST request to {self.path}")
+        print(f"Headers: {dict(self.headers)}")
+
         if self.path == '/api/analyze':
             try:
                 # Parse the form data
                 form_data = self.parse_multipart_form()
+                print(f"Form data keys: {form_data.keys() if form_data else 'None'}")
 
                 if not form_data:
                     self._set_headers()
