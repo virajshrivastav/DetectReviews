@@ -27,3 +27,6 @@ services:
           property: host
       - key: NEXT_PUBLIC_API_PROTOCOL
         value: "https"
+      # Add a direct URL as a fallback
+      - key: NEXT_PUBLIC_API_DIRECT_URL
+        value: "https://fakedetector-api.onrender.com"

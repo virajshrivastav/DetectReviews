@@ -29,12 +29,16 @@ export default function Home() {
       formData.append('model', 'thudm/glm-4-9b:free') // Use a faster free model
 
       // Get the API URL and protocol from environment variables or use defaults
+      // Try to use the direct URL first if available
+      const directUrl = process.env.NEXT_PUBLIC_API_DIRECT_URL
       const apiHost = process.env.NEXT_PUBLIC_API_URL || 'localhost:8000'
       const apiProtocol = process.env.NEXT_PUBLIC_API_PROTOCOL || 'http'
 
       // Construct the full URL with appropriate protocol
-      // If it already includes http:// or https://, use it as is
-      const apiUrl = apiHost.startsWith('http') ? apiHost : `${apiProtocol}://${apiHost}`
+      // If direct URL is available, use it
+      // Otherwise, if apiHost already includes http:// or https://, use it as is
+      // Otherwise, construct the URL from protocol and host
+      const apiUrl = directUrl || (apiHost.startsWith('http') ? apiHost : `${apiProtocol}://${apiHost}`)
 
       console.log('Using API URL:', apiUrl)
 
@@ -46,6 +50,11 @@ export default function Home() {
         response = await fetch(`${apiUrl}/api/analyze`, {
           method: 'POST',
           body: formData,
+          mode: 'cors',
+          credentials: 'omit',
+          headers: {
+            'Accept': 'application/json',
+          },
         })
 
         console.log('Response status:', response.status)

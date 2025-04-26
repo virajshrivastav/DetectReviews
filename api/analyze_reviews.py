@@ -32,7 +32,9 @@ class ReviewAnalyzerHandler(BaseHTTPRequestHandler):
             self.send_header('Access-Control-Allow-Origin', origin)
 
         self.send_header('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Origin, Accept')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Origin, Accept, X-Requested-With')
+        self.send_header('Access-Control-Allow-Credentials', 'true')
+        self.send_header('Access-Control-Max-Age', '86400')  # 24 hours
         self.end_headers()
 
     def do_OPTIONS(self):
@@ -48,6 +50,10 @@ class ReviewAnalyzerHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
             self.wfile.write(b'API server is running')
+        elif self.path == '/api/analyze':
+            # For preflight checks or health checks
+            self._set_headers()
+            self.wfile.write(json.dumps({'status': 'ready'}).encode())
         else:
             self.send_response(404)
             self.end_headers()
