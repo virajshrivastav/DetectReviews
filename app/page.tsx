@@ -28,20 +28,11 @@ export default function Home() {
       formData.append('file', files[0])
       formData.append('model', 'thudm/glm-4-9b:free') // Use a faster free model
 
-      // For Render deployment, use the hardcoded URL
-      // This ensures we're using the correct URL format for Render services
-      const isProduction = process.env.NODE_ENV === 'production'
+      // Use the proxy approach - this will route through Next.js
+      // which will handle the CORS and other issues
+      const apiUrl = ''  // Empty string means use the same origin
 
-      let apiUrl
-      if (isProduction) {
-        // Use the hardcoded Render URL in production
-        apiUrl = 'https://fakedetector-api.onrender.com'
-      } else {
-        // In development, use the environment variable or default
-        const apiHost = process.env.NEXT_PUBLIC_API_URL || 'localhost:8000'
-        const apiProtocol = process.env.NEXT_PUBLIC_API_PROTOCOL || 'http'
-        apiUrl = apiHost.startsWith('http') ? apiHost : `${apiProtocol}://${apiHost}`
-      }
+      console.log('Using proxy approach for API communication')
 
       console.log('Using API URL:', apiUrl)
 
