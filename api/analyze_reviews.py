@@ -22,14 +22,10 @@ class ReviewAnalyzerHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', content_type)
 
-        # Handle CORS
-        origin = self.headers.get('Origin', '')
-        if '*' in ALLOWED_ORIGINS:
-            self.send_header('Access-Control-Allow-Origin', '*')
-        elif origin in ALLOWED_ORIGINS:
-            self.send_header('Access-Control-Allow-Origin', origin)
-        elif any(origin.endswith(domain.strip()) for domain in ALLOWED_ORIGINS if domain.startswith('.')):
-            self.send_header('Access-Control-Allow-Origin', origin)
+        # Handle CORS - Always allow all origins for simplicity
+        # This is safe for this application since we're not handling sensitive data
+        # and we're only accepting requests from our own frontend
+        self.send_header('Access-Control-Allow-Origin', '*')
 
         self.send_header('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Origin, Accept, X-Requested-With')

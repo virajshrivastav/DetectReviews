@@ -28,26 +28,47 @@ export default function Home() {
       formData.append('file', files[0])
       formData.append('model', 'thudm/glm-4-9b:free') // Use a faster free model
 
-      // Get the API URL and protocol from environment variables or use defaults
-      // Try to use the direct URL first if available
-      const directUrl = process.env.NEXT_PUBLIC_API_DIRECT_URL
-      const apiHost = process.env.NEXT_PUBLIC_API_URL || 'localhost:8000'
-      const apiProtocol = process.env.NEXT_PUBLIC_API_PROTOCOL || 'http'
+      // For Render deployment, use the hardcoded URL
+      // This ensures we're using the correct URL format for Render services
+      const isProduction = process.env.NODE_ENV === 'production'
 
-      // Construct the full URL with appropriate protocol
-      // If direct URL is available, use it
-      // Otherwise, if apiHost already includes http:// or https://, use it as is
-      // Otherwise, construct the URL from protocol and host
-      const apiUrl = directUrl || (apiHost.startsWith('http') ? apiHost : `${apiProtocol}://${apiHost}`)
+      let apiUrl
+      if (isProduction) {
+        // Use the hardcoded Render URL in production
+        apiUrl = 'https://fakedetector-api.onrender.com'
+      } else {
+        // In development, use the environment variable or default
+        const apiHost = process.env.NEXT_PUBLIC_API_URL || 'localhost:8000'
+        const apiProtocol = process.env.NEXT_PUBLIC_API_PROTOCOL || 'http'
+        apiUrl = apiHost.startsWith('http') ? apiHost : `${apiProtocol}://${apiHost}`
+      }
 
       console.log('Using API URL:', apiUrl)
 
       // Send the file to the API
-      console.log('Sending request to:', `${apiUrl}/api/analyze`)
+      const fullUrl = `${apiUrl}/api/analyze`
+      console.log('Sending request to:', fullUrl)
 
       let response;
       try {
-        response = await fetch(`${apiUrl}/api/analyze`, {
+        // First, try to check if the API is available
+        const checkResponse = await fetch(`${apiUrl}/`, {
+          method: 'GET',
+          mode: 'cors',
+          credentials: 'omit',
+        }).catch(e => {
+          console.error('API health check failed:', e)
+          return null
+        })
+
+        if (!checkResponse) {
+          console.warn('API health check failed, trying direct request anyway')
+        } else {
+          console.log('API health check successful, status:', checkResponse.status)
+        }
+
+        // Now send the actual request
+        response = await fetch(fullUrl, {
           method: 'POST',
           body: formData,
           mode: 'cors',

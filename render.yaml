@@ -10,7 +10,9 @@ services:
       - key: OPENROUTER_API_KEY
         value: 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
       - key: ALLOWED_ORIGINS
-        value: "*"  # Allow all origins initially, we'll update this later
+        value: "*"
+      - key: PORT
+        value: "10000"  # Explicitly set the port to match Render's default
 
   # Frontend Next.js Service
   - type: web
