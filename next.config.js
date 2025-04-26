@@ -5,7 +5,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'https://fakedetector-api.onrender.com/api/:path*',
+        destination: 'https://fakedetector-api-ve01.onrender.com/api/:path*',
       },
     ]
   },

@@ -31,4 +31,4 @@ services:
         value: "https"
       # Add a direct URL as a fallback
       - key: NEXT_PUBLIC_API_DIRECT_URL
-        value: "https://fakedetector-api.onrender.com"
+        value: "https://fakedetector-api-ve01.onrender.com"
